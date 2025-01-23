@@ -1,0 +1,5 @@
+.env
+.tmp/
+*account*
+secrets/
+.DS_Store

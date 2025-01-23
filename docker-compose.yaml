@@ -1,0 +1,159 @@
+services:
+  ######################################################################################################################
+  # Microservices
+  ######################################################################################################################
+  location-service:
+    image: my-ls
+    container_name: location-service
+    depends_on:
+      rabbitmq-broker:
+        condition: service_healthy
+      cassandra-db:
+        condition: service_healthy
+      cassandra-init:
+        condition: service_completed_successfully
+    env_file: ".env"
+    environment:
+      RABBITMQ_HOST: rabbitmq-broker
+      RABBITMQ_VIRTUAL_HOST: /
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: admin
+      GRPC_PORT: 5052
+      HTTP_PORT: 8080
+      PRODUCTION: false
+      CASSANDRA_CONTACT_POINT: cassandra-db:9042
+      CASSANDRA_USERNAME: cassandra
+      CASSANDRA_PASSWORD: cassandra
+    networks:
+      - back-tier
+
+  notification-service:
+    image: positionpal/notification-service:2.1.1
+    container_name: notification-service
+    depends_on:
+      rabbitmq-broker:
+        condition: service_healthy
+      postgres-db:
+        condition: service_healthy
+    environment:
+      RABBITMQ_HOST: rabbitmq-broker
+      RABBITMQ_VIRTUAL_HOST: /
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: admin
+      RABBITMQ_PORT: 5672
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST: postgres-db
+      POSTGRES_PORT: 5432
+      GRPC_PORT: 5052
+      FIREBASE_SERVICE_ACCOUNT_FILE_PATH: /service-account.json
+    volumes:
+      - ./secrets/service-account.json:/service-account.json
+    networks:
+      - back-tier
+
+  user-service:
+    image: positionpal/user-service:1.2.0
+    container_name: user-service
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+      rabbitmq-broker:
+        condition: service_healthy
+    environment:
+      POSTGRES_DB: "users_and_groups"
+      POSTGRES_HOST: postgres-db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      JWT_SECRET: mUOoxn4zZQU6Vbpe1WFO7wou5YZe5zbsoSLVSlMGn4I=
+      RABBITMQ_HOST: rabbitmq-broker
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: admin
+      USER_SERVICE_PORT: 5052
+    networks:
+      - back-tier
+
+  gateway:
+    image: my-gateway
+    container_name: gateway
+    depends_on:
+      # - location-service
+      - notification-service
+      - user-service
+    ports:
+      - "3000:3000"
+    environment:
+      LOCATION_SERVICE_HTTP_URL: location-service:8080
+      LOCATION_SERVICE_GRPC_URL: location-service:5052
+      USER_SERVICE_URL: user-service:5052
+    networks:
+      - back-tier
+      - front-tier
+
+  ######################################################################################################################
+  # Infrastructure components
+  ######################################################################################################################
+  cassandra-db:
+    image: cassandra:latest@sha256:5d4795c41491654e2bda432179e020c7c2cd702bbb22b7d1314747658efd71b4
+    container_name: cassandra-db
+    healthcheck:
+      test: [ "CMD", "cqlsh", "-e", "describe keyspaces" ]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+    networks:
+      - back-tier
+
+  cassandra-init:
+    image: cassandra:latest@sha256:5d4795c41491654e2bda432179e020c7c2cd702bbb22b7d1314747658efd71b4
+    container_name: cassandra-init
+    depends_on:
+      cassandra-db:
+        condition: service_healthy
+    volumes:
+      - ./scripts/init-cassandra.sh:/init.sh
+    command: ["/bin/bash", "/init.sh"]
+    networks:
+      - back-tier
+
+  rabbitmq-broker:
+    image: rabbitmq:4-management@sha256:4a2b95d53111fe589fb44b5152ff87253c63eb227eee21f39494f64d9d96c0b2
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: admin
+    # ports:
+    #   - "15672:15672" # the port the dashboard web service will be available from, for debugging
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    networks:
+      - back-tier
+
+  postgres-db:
+    image: postgres:17.2
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./.tmp/:/docker-entrypoint-initdb.d/
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U postgres'"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - back-tier
+
+networks:
+  back-tier:
+    driver: bridge
+    internal: false
+  front-tier:
+    driver: bridge
+    internal: false
