@@ -1,5 +1,6 @@
 .env
 .tmp/
 *account*
-secrets/
+secrets/*
+!secrets/.gitkeep
 .DS_Store
