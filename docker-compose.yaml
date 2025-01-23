@@ -3,7 +3,7 @@ services:
   # Microservices
   ######################################################################################################################
   location-service:
-    image: my-ls
+    image: positionpal/location-service:3.0.1
     container_name: location-service
     depends_on:
       rabbitmq-broker:
@@ -66,7 +66,7 @@ services:
       POSTGRES_HOST: postgres-db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      JWT_SECRET: mUOoxn4zZQU6Vbpe1WFO7wou5YZe5zbsoSLVSlMGn4I=
+      JWT_SECRET: mUOoxn4zZQU6Vbpe1WFO7wou5YZe5zbsoSLVSlMGn4I= # don't worry, no secret exposed. This was randomly generated and is not used in production!
       RABBITMQ_HOST: rabbitmq-broker
       RABBITMQ_PORT: 5672
       RABBITMQ_USERNAME: guest
@@ -79,9 +79,9 @@ services:
     image: my-gateway
     container_name: gateway
     depends_on:
-      # - location-service
-      - notification-service
-      - user-service
+      - location-service
+      #- notification-service
+      #- user-service
     ports:
       - "3000:3000"
     environment:

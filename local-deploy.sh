@@ -2,7 +2,8 @@
 
 function up() {
     ./scripts/init-postgres.sh
-    docker compose up --build -d
+    # TODO: bring up all services
+    docker compose up -d --build rabbitmq-broker cassandra-db cassandra-init location-service gateway
 }
 
 function down() {
