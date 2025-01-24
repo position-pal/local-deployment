@@ -1,14 +1,13 @@
 #!/bin/bash
 
-function up() {
-    ./scripts/init-postgres.sh
-    # TODO: bring up all services
-    docker compose up -d --build rabbitmq-broker postgres-db cassandra-db cassandra-init location-service gateway
-    cleanup
-}
-
 function cleanup() {
     rm -rf .tmp
+}
+
+function up() {
+    ./scripts/init-postgres.sh
+    docker compose up -d --build
+    cleanup
 }
 
 function down() {

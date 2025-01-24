@@ -3,7 +3,7 @@ services:
   # Microservices
   ######################################################################################################################
   location-service:
-    image: positionpal/location-service:3.0.1
+    image: positionpal/location-service:3.0.2
     container_name: location-service
     depends_on:
       rabbitmq-broker:
@@ -12,8 +12,9 @@ services:
         condition: service_healthy
       cassandra-init:
         condition: service_completed_successfully
-    env_file: ".env"
     environment:
+      MAPBOX_API_KEY: ${MAPBOX_API_KEY}
+      AKKA_LICENSE_KEY: ${AKKA_LICENSE_KEY}
       RABBITMQ_HOST: rabbitmq-broker
       RABBITMQ_VIRTUAL_HOST: /
       RABBITMQ_PORT: 5672
@@ -28,33 +29,33 @@ services:
     networks:
       - back-tier
 
-  notification-service:
-    image: positionpal/notification-service:2.1.1
-    container_name: notification-service
-    depends_on:
-      rabbitmq-broker:
-        condition: service_healthy
-      postgres-db:
-        condition: service_healthy
-    environment:
-      RABBITMQ_HOST: rabbitmq-broker
-      RABBITMQ_VIRTUAL_HOST: /
-      RABBITMQ_USERNAME: guest
-      RABBITMQ_PASSWORD: admin
-      RABBITMQ_PORT: 5672
-      POSTGRES_USERNAME: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_HOST: postgres-db
-      POSTGRES_PORT: 5432
-      GRPC_PORT: 5052
-      FIREBASE_SERVICE_ACCOUNT_FILE_PATH: /service-account.json
-    volumes:
-      - ./secrets/service-account.json:/service-account.json
-    networks:
-      - back-tier
+  # notification-service:
+  #   image: positionpal/notification-service:2.1.2
+  #   container_name: notification-service
+  #   depends_on:
+  #     rabbitmq-broker:
+  #       condition: service_healthy
+  #     postgres-db:
+  #       condition: service_healthy
+  #   environment:
+  #     RABBITMQ_HOST: rabbitmq-broker
+  #     RABBITMQ_VIRTUAL_HOST: /
+  #     RABBITMQ_USERNAME: guest
+  #     RABBITMQ_PASSWORD: admin
+  #     RABBITMQ_PORT: 5672
+  #     POSTGRES_USERNAME: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #     POSTGRES_HOST: postgres-db
+  #     POSTGRES_PORT: 5432
+  #     GRPC_PORT: 5052
+  #     FIREBASE_SERVICE_ACCOUNT_FILE_PATH: /service-account.json
+  #   volumes:
+  #     - ./secrets/service-account.json:/service-account.json
+  #   networks:
+  #     - back-tier
 
   user-service:
-    image: positionpal/user-service:1.2.0
+    image: positionpal/user-service:1.2.1
     container_name: user-service
     depends_on:
       postgres-db:
@@ -76,12 +77,12 @@ services:
       - back-tier
 
   gateway:
-    image: my-gateway
+    image: positionpal/gateway:2.0.0
     container_name: gateway
     depends_on:
+      - user-service
       - location-service
       #- notification-service
-      #- user-service
     ports:
       - "3000:3000"
     environment:
