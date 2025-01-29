@@ -1,0 +1,31 @@
+name: Continuous Integration
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  test-compose:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - name: Docker compose up
+        run: docker compose up -d
+      - name: Docker compose down
+        run: docker compose down
+  
+  success:
+    needs:
+      - test-compose
+    if:
+      >- # run if at least one needed job has failed or all needed jobs have not been cancelled
+      always() && (
+        contains(join(needs.*.result, ','), 'failure')
+        || !contains(join(needs.*.result, ','), 'cancelled')
+      )
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Verify no failures occurred in needed jobs
+        # if there are failures, false is executed and the job fails.
+        run: ${{ !contains(join(needs.*.result, ','), 'failure') }}
