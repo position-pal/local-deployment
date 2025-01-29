@@ -10,10 +10,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
-      - name: Docker compose up
-        run: docker compose up -d
-      - name: Docker compose down
-        run: docker compose down
+      - name: Test local deploy up
+        run: ./local-deploy.sh up
+      - name: Docker local deploy down
+        run: ./local-deploy.sh down
   
   success:
     needs:
