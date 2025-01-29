@@ -3,7 +3,7 @@ services:
   # Microservices
   ######################################################################################################################
   location-service:
-    image: positionpal/location-service:3.0.2
+    image: positionpal/location-service:3.0.2@sha256:a057d90e1f367c3a7a5a6a398e8638216c69f324f0606cf7c7e30b53cbb52cd6
     container_name: location-service
     depends_on:
       rabbitmq-broker:
@@ -55,7 +55,7 @@ services:
   #     - back-tier
 
   user-service:
-    image: positionpal/user-service:1.2.1
+    image: positionpal/user-service:1.2.1@sha256:ee771e8e8eaab588e6fb02d2524d281f9ed9b80a76bf2866b358f002677a2b30
     container_name: user-service
     depends_on:
       postgres-db:
@@ -77,7 +77,7 @@ services:
       - back-tier
 
   gateway:
-    image: positionpal/gateway:2.0.1
+    image: positionpal/gateway:2.0.1@sha256:a18e62c76fd3529a3601accebffadd47ba79a9602d29b1357b9de050a61157fe
     container_name: gateway
     depends_on:
       - user-service
@@ -135,7 +135,7 @@ services:
       - back-tier
 
   postgres-db:
-    image: postgres:17.2
+    image: postgres:17.2@sha256:87ec5e0a167dc7d4831729f9e1d2ee7b8597dcc49ccd9e43cc5f89e808d2adae
     container_name: postgres-db
     environment:
       POSTGRES_USER: postgres
