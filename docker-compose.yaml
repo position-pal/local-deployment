@@ -29,30 +29,30 @@ services:
     networks:
       - back-tier
 
-  # notification-service:
-  #   image: positionpal/notification-service:2.1.2
-  #   container_name: notification-service
-  #   depends_on:
-  #     rabbitmq-broker:
-  #       condition: service_healthy
-  #     postgres-db:
-  #       condition: service_healthy
-  #   environment:
-  #     RABBITMQ_HOST: rabbitmq-broker
-  #     RABBITMQ_VIRTUAL_HOST: /
-  #     RABBITMQ_USERNAME: guest
-  #     RABBITMQ_PASSWORD: admin
-  #     RABBITMQ_PORT: 5672
-  #     POSTGRES_USERNAME: postgres
-  #     POSTGRES_PASSWORD: postgres
-  #     POSTGRES_HOST: postgres-db
-  #     POSTGRES_PORT: 5432
-  #     GRPC_PORT: 5052
-  #     FIREBASE_SERVICE_ACCOUNT_FILE_PATH: /service-account.json
-  #   volumes:
-  #     - ./secrets/service-account.json:/service-account.json
-  #   networks:
-  #     - back-tier
+  notification-service:
+    image: positionpal/notification-service:2.1.2
+    container_name: notification-service
+    depends_on:
+      rabbitmq-broker:
+        condition: service_healthy
+      postgres-db:
+        condition: service_healthy
+    environment:
+      RABBITMQ_HOST: rabbitmq-broker
+      RABBITMQ_VIRTUAL_HOST: /
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: admin
+      RABBITMQ_PORT: 5672
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST: postgres-db
+      POSTGRES_PORT: 5432
+      GRPC_PORT: 5052
+      FIREBASE_SERVICE_ACCOUNT_FILE_PATH: /service-account.json
+    volumes:
+      - ./secrets/service-account.json:/service-account.json
+    networks:
+      - back-tier
 
   user-service:
     image: positionpal/user-service:1.2.2@sha256:4f7284667b473d9a4cf99b7bd26d012101a6c3cc0eb66f516d18cdfc2454d235
@@ -82,7 +82,7 @@ services:
     depends_on:
       - user-service
       - location-service
-      #- notification-service
+      - notification-service
     ports:
       - "3000:3000"
     environment:

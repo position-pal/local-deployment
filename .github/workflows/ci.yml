@@ -7,11 +7,29 @@ on:
 jobs:
   test-compose:
     runs-on: ubuntu-24.04
+    env:
+      SCRIPTS_DIR: .github/scripts
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - name: Setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Setup python requirements
+        run: cd $SCRIPTS_DIR && pip install -r requirements.txt
+      - name: Setup secrets
+        uses: mobiledevops/secret-to-file-action@v1
+        with:
+          base64-encoded-secret: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          filename: service-account.json
+          working-directory: ./secrets
       - name: Test local deploy up
         run: ./local-deploy.sh up
+      - name: Check all containers are up and running
+        run: |
+          EXCLUDED_CONTAINERS="cassandra-init"
+          python $SCRIPTS_DIR/check-containers.py $EXCLUDED_CONTAINERS
       - name: Docker local deploy down
         run: ./local-deploy.sh down
   

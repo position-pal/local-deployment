@@ -3,8 +3,8 @@
 This repo contains the docker-compose files to deploy the PositionPal services locally.
 
 > [!WARNING]
-> This should be used for development and testing purposes only.
-> For production deployments, please refer to the [PositionPal deployment guide using Kubernetes](https://github.com/position-pal/helm-charts).
+> This is meant to be used for development and testing purposes only.
+> In production, please refer to the [PositionPal deployment guide using Kubernetes](https://github.com/position-pal/helm-charts).
 
 To deploy the services locally, make sure to have set the following environment variables (either in the shell or in a `.env` file):
 
