@@ -13,13 +13,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - name: Setup python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5
         with:
           python-version: '3.13'
       - name: Setup python requirements
         run: cd $SCRIPTS_DIR && pip install -r requirements.txt
       - name: Setup secrets
-        uses: mobiledevops/secret-to-file-action@v1
+        uses: mobiledevops/secret-to-file-action@be5f14e82c235ccde011f6ab0f6c984b35dc34c6 # v1
         with:
           base64-encoded-secret: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           filename: service-account.json
