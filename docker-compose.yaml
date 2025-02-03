@@ -77,7 +77,7 @@ services:
       - back-tier
 
   gateway:
-    image: positionpal/gateway:2.2.0@sha256:ce0cdfa30abe4e626cce552046eb513e03671b6f8803045eb769f918a5c175f2
+    image: positionpal/gateway:2.3.0@sha256:6ffada04bdce6711e5aa2388048100e8d6f1abf3f9dfd3529b83ce2d52486577
     container_name: gateway
     depends_on:
       - user-service
