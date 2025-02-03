@@ -88,6 +88,7 @@ services:
     environment:
       LOCATION_SERVICE_HTTP_URL: location-service:8080
       LOCATION_SERVICE_GRPC_URL: location-service:5052
+      NOTIFICATION_SERVICE_GRPC_URL: notification-service:5052
       USER_SERVICE_URL: user-service:5052
     networks:
       - back-tier
