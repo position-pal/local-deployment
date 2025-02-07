@@ -18,15 +18,15 @@ function down() {
     cleanup
 }
 
-function process_locals() {
+function process_overrides() {
     mkdir -p .tmp
-    echo "Processing local images..."
-    if [[ ${#LOCALS[@]} -eq 0 ]]; then
-        echo "No local images to process."
+    echo "Processing override images..."
+    if [[ ${#OVERRIDES[@]} -eq 0 ]]; then
+        echo "No override images to process."
         return
     fi
-    echo "Modifying $COMPOSE_FILE with local images..."
-    for SERVICE in "${LOCALS[@]}"; do
+    echo "Modifying $COMPOSE_FILE with override images..."
+    for SERVICE in "${OVERRIDES[@]}"; do
         NAME="${SERVICE%%:*}"
         IMAGE="${SERVICE#*:}"
         yq eval ".services.$NAME.image = \"$IMAGE\"" -i "$COMPOSE_FILE"
@@ -36,30 +36,30 @@ function process_locals() {
 SCRIPT_DIR="$(dirname "$(realpath "$0")")"
 cd "$SCRIPT_DIR"
 
-LOCALS=()
-COMMAND=""
+OVERRIDES=()
 
 if ! command -v yq &> /dev/null; then
-    echo "Error: yq is required. Install it with:"
+    echo "Error: 'yq' command is required. Install it first!"
     exit 1
 fi
 
+COMMAND=""
 while [[ "$#" -gt 0 ]]; do
     case "$1" in
         up|down)
             COMMAND="$1"
             ;;
-        --local)
+        --override)
             if [[ -n "$2" ]]; then
-                LOCALS+=("$2")
+                OVERRIDES+=("$2")
                 shift
             else
-                echo "Error: --local requires an argument (service:image)"
+                echo "Error: --override requires an argument (<service-name>:<new-image>)"
                 exit 1
             fi
             ;;
         *)
-            echo "Usage: $0 [up|down] [--local service-name:local-image]..."
+            echo "Usage: $0 [up|down] [--override <service-name>:<new-image>]..."
             exit 1
             ;;
     esac
@@ -67,11 +67,11 @@ while [[ "$#" -gt 0 ]]; do
 done
 
 if [[ -z "$COMMAND" ]]; then
-    echo "Usage: $0 [up|down] [--local service-name:local-image]..."
+    echo "Usage: $0 [up|down] [--override <service-name>:<new-image>]..."
     exit 1
 fi
 
-process_locals
+process_overrides
 
 if [[ "$COMMAND" == "up" ]]; then
     up
