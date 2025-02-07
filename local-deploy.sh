@@ -33,6 +33,9 @@ function process_locals() {
     done
 }
 
+SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+cd "$SCRIPT_DIR"
+
 LOCALS=()
 COMMAND=""
 
