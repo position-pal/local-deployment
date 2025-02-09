@@ -55,7 +55,7 @@ services:
       - back-tier
 
   user-service:
-    image: positionpal/user-service:1.3.0@sha256:703d638c027af4fec79c9f489b47a07108c2b014a9feb913be7703abd49f31c7
+    image: positionpal/user-service:1.3.1@sha256:79c48278b388deece24837c4939ea06cccdf95eecb2710a06daddc5587c79a47
     container_name: user-service
     depends_on:
       postgres-db:
