@@ -1,16 +1,21 @@
 #!/bin/bash
 set -e  # Exit immediately if a command fails
+trap cleanup EXIT  # Cleanup on exit
 
+TMP_DIR=".tmp"
 COMPOSE_FILE="docker-compose.yaml"
+COMPOSE_BACKUP_FILE="$TMP_DIR/docker-compose.backup.yaml"
 
 function cleanup() {
-    rm -rf .tmp
+    if [[ -f "$COMPOSE_BACKUP_FILE" ]]; then
+        mv "$COMPOSE_BACKUP_FILE" "$COMPOSE_FILE"
+    fi
+    rm -rf $TMP_DIR
 }
 
 function up() {
     ./scripts/init-postgres.sh
     docker compose -f "$COMPOSE_FILE" up -d --build
-    cleanup
 }
 
 function down() {
@@ -26,6 +31,9 @@ function process_overrides() {
         return
     fi
     echo "Modifying $COMPOSE_FILE with override images..."
+    if [[ ! -f "$COMPOSE_BACKUP_FILE" ]]; then
+        cp "$COMPOSE_FILE" "$COMPOSE_BACKUP_FILE"
+    fi
     for SERVICE in "${OVERRIDES[@]}"; do
         NAME="${SERVICE%%:*}"
         IMAGE="${SERVICE#*:}"
@@ -71,9 +79,9 @@ if [[ -z "$COMMAND" ]]; then
     exit 1
 fi
 
-process_overrides
-
 if [[ "$COMMAND" == "up" ]]; then
+    down
+    process_overrides
     up
 elif [[ "$COMMAND" == "down" ]]; then
     down
