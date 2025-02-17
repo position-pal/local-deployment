@@ -3,7 +3,7 @@ services:
   # Microservices
   ######################################################################################################################
   location-service:
-    image: positionpal/location-service:4.0.4@sha256:0d09e652d8205b4d3ad077efc594b62c481794a2e7036f895342a8256b333cf2
+    image: positionpal/location-service:4.0.5@sha256:756aa5f68213f4303d6f26a2ae2ff2079ae0d0498f2945098498d2bddd76540d
     container_name: location-service
     depends_on:
       rabbitmq-broker:
