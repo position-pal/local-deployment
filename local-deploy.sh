@@ -80,7 +80,6 @@ if [[ -z "$COMMAND" ]]; then
 fi
 
 if [[ "$COMMAND" == "up" ]]; then
-    down
     process_overrides
     up
 elif [[ "$COMMAND" == "down" ]]; then
