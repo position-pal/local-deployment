@@ -3,10 +3,12 @@
 # This is intended to be executed inside a Cassandra container after the database is up and running
 #  (see `cassandra-init` in ../docker-compose.yaml for more details).
 
+https://raw.githubusercontent.com/position-pal/chat-service/refs/heads/main/infrastructure/src/main/resources/db-scripts/cassandra-schema-creation.cql
 POSITION_PAL_ORG="https://raw.githubusercontent.com/position-pal"
 INIT_SCRIPTS=(
     "location-service/main/tracking-actors/src/main/resources/db-scripts/create-tables.cql"
     "location-service/main/storage/src/main/resources/db-scripts/create-tables.cql"
+    "chat-service/main/infrastructure/src/main/resources/db-scripts/cassandra-schema-creation.cql"
 )
 OUT_DIR="/init-scripts"
 
