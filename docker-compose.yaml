@@ -76,31 +76,32 @@ services:
     networks:
       - back-tier
 
-  chat-service:
-    image: positionpal/chat-service:latest@sha256:347db7d5122adad9b34190177512cb8e37121b4b88df8b9df4852a4d95e85228
-    container_name: chat-service
-    depends_on:
-      rabbitmq-broker:
-        condition: service_healthy
-      cassandra-db:
-        condition: service_healthy
-      cassandra-init:
-        condition: service_completed_successfully
-    environment:
-      AKKA_LICENSE_KEY: ${AKKA_LICENSE_KEY}
-      RABBITMQ_HOST: rabbitmq-broker
-      RABBITMQ_VIRTUAL_HOST: /
-      RABBITMQ_PORT: 5672
-      RABBITMQ_USERNAME: guest
-      RABBITMQ_PASSWORD: admin
-      USER_SERVICE_EVENT_QUEUE: group_updates_chat_service
-      GRPC_PORT: 5052
-      HTTP_PORT: 8080
-      CASSANDRA_CONTACT_POINT: cassandra-db:9042
-      CASSANDRA_USERNAME: cassandra
-      CASSANDRA_PASSWORD: cassandra
-    networks:
-      - back-tier
+  # chat-service:
+  #   image: positionpal/chat-service:3.3.1
+  #   container_name: chat-service
+  #   depends_on:
+  #     rabbitmq-broker:
+  #       condition: service_healthy
+  #     cassandra-db:
+  #       condition: service_healthy
+  #     cassandra-init:
+  #       condition: service_completed_successfully
+  #   environment:
+  #     AKKA_LICENSE_KEY: ${AKKA_LICENSE_KEY}
+  #     RABBITMQ_HOST: rabbitmq-broker
+  #     RABBITMQ_VIRTUAL_HOST: /
+  #     RABBITMQ_PORT: 5672
+  #     RABBITMQ_USERNAME: guest
+  #     RABBITMQ_PASSWORD: admin
+  #     USER_SERVICE_EVENT_QUEUE: group_updates_chat_service
+  #     GRPC_PORT: 5052
+  #     HTTP_PORT: 8080
+  #     CASSANDRA_CONTACT_POINT: cassandra-db:9042
+  #     CASSANDRA_USERNAME: cassandra
+  #     CASSANDRA_PASSWORD: cassandra
+  #     LOG_LEVEL: DEBUG
+  #   networks:
+  #     - back-tier
 
   gateway:
     image: positionpal/gateway:3.0.0@sha256:364808e0d5f5b5a1f94b5dd7b127e12b14131ffbe00dd0005e5ce4ee5f0a1d8a
