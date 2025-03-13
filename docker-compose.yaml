@@ -77,7 +77,7 @@ services:
       - back-tier
 
   chat-service:
-    image: positionpal/chat-service:latest@sha256:347db7d5122adad9b34190177512cb8e37121b4b88df8b9df4852a4d95e85228
+    image: positionpal/chat-service:latest@sha256:fdd383ffe38ba51a4f99c5a39874a3dfe95160f540ee2d1f2d3e97d6f4cf4b4b
     container_name: chat-service
     depends_on:
       rabbitmq-broker:
