@@ -148,7 +148,7 @@ services:
       - back-tier
 
   rabbitmq-broker:
-    image: rabbitmq:4-management@sha256:bb02d38a2fbcfe9122e3e72f578956255fcd2e4d425a6af4bd83e578769e534e
+    image: rabbitmq:4-management@sha256:e85107c44dd023b74253f600590b24a0373ec5bd977ce8788a18881291a4af7c
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: admin
