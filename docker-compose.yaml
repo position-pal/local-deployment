@@ -163,7 +163,7 @@ services:
       - back-tier
 
   postgres-db:
-    image: postgres:17.5@sha256:4d89c904835259bc58876520e56267ca07a4ebd6a027f7814bbbf91b50d685be
+    image: postgres:17.5@sha256:0d5b8e334c933cec2fb09b4b6489fb7fb83a0c63cf7ded3528d8b6a8d5cddf4f
     container_name: postgres-db
     environment:
       POSTGRES_USER: postgres
