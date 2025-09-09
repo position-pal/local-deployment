@@ -125,7 +125,7 @@ services:
   # Infrastructure components
   ######################################################################################################################
   cassandra-db:
-    image: cassandra:latest@sha256:cda10f2890f66e38648755cdf2be020e7eaee01cc168c2cf37ed722295a8ba1b
+    image: cassandra:latest@sha256:6f0f4917c10a841587945c7d8ff934a7413c5c2f89740c2dd72ea963b47d2358
     container_name: cassandra-db
     healthcheck:
       test: [ "CMD", "cqlsh", "-e", "describe keyspaces" ]
@@ -136,7 +136,7 @@ services:
       - back-tier
 
   cassandra-init:
-    image: cassandra:latest@sha256:cda10f2890f66e38648755cdf2be020e7eaee01cc168c2cf37ed722295a8ba1b
+    image: cassandra:latest@sha256:6f0f4917c10a841587945c7d8ff934a7413c5c2f89740c2dd72ea963b47d2358
     container_name: cassandra-init
     depends_on:
       cassandra-db:
