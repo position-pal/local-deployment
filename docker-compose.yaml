@@ -30,7 +30,7 @@ services:
       - back-tier
 
   notification-service:
-    image: positionpal/notification-service:2.10.0@sha256:83d286f22501a14d862aa78d867a713c33b1d25f0befed976d7b64b627cafefd
+    image: positionpal/notification-service:2.11.0@sha256:6d5797cdadd2c420db1dd177d26535da16a74c2687a0321dab6f2ae4d6135e46
     container_name: notification-service
     depends_on:
       rabbitmq-broker:
