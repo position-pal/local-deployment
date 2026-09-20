@@ -6,7 +6,7 @@ on:
 
 jobs:
   test-compose:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     env:
       SCRIPTS_DIR: .github/scripts
     steps:
@@ -42,7 +42,7 @@ jobs:
         contains(join(needs.*.result, ','), 'failure')
         || !contains(join(needs.*.result, ','), 'cancelled')
       )
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Verify no failures occurred in needed jobs
         # if there are failures, false is executed and the job fails.
